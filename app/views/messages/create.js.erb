@@ -1,0 +1,37 @@
+<% publish_to @chat_path do 
+    recipient_id = nil
+    if @conversation.user_id == @message.user.id
+      recipient_id = @conversation.recipient_id
+    else
+      recipient_id = @conversation.user_id
+    end
+%>
+  var id = "<%= @conversation.id %>";
+  var chatbox = $("#chatbox_" + id + " .chatboxcontent");
+  var sender_id = "<%= @message.user.id %>";
+  var reciever_id = $('meta[name=user-id]').attr("content");
+  var msg_reciever_id = "<%= recipient_id %>"
+  if(reciever_id == msg_reciever_id){
+    $("a[data-rip="+sender_id+"]").trigger('click');
+    chatBox.chatWith(id);
+    chatBox.notify();
+  }
+<% end %>
+
+<% publish_to @path do %>
+  var id = "<%= @conversation.id %>";
+  var chatbox = $("#chatbox_" + id + " .chatboxcontent");
+  var sender_id = "<%= @message.user.id %>";
+  var reciever_id = $('meta[name=user-id]').attr("content");
+
+  chatbox.append("<%= j render( partial: @message ) %>");
+  chatbox.scrollTop(chatbox[0].scrollHeight);
+
+  if(sender_id != reciever_id){
+    $("a[data-rip="+sender_id+"]").trigger('click');
+    chatBox.chatWith(id);
+    chatbox.children().last().removeClass("self").addClass("other");
+    chatbox.scrollTop(chatbox[0].scrollHeight);
+    chatBox.notify();
+  }
+<% end %>
